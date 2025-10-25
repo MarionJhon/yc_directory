@@ -1,5 +1,5 @@
 {
-  "name": "next-app",
+  "name": "yc_directory",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,6 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
+  },
+  "packageManager": "npm@10.9.2",
+  "overrides": {
+    "react": "$react",
+    "react-dom": "react-dom"
   },
   "dependencies": {
     "react": "19.2.0",
