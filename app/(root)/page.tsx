@@ -1,5 +1,7 @@
+import { client } from "@/sanity/lib/client";
 import SearchForm from "../../components/SearchForm";
-import StartupCard from "@/components/StartupCard";
+import StartupCard, { StartupTypeCard } from "@/components/StartupCard";
+import { STARTUP_QUERY } from "@/sanity/lib/query";
 
 export default async function Home({
   searchParams,
@@ -8,19 +10,8 @@ export default async function Home({
 }) {
   const query = (await searchParams).query;
 
-  const posts = [
-    {
-      _createdAt: new Date(),
-      views: 54,
-      author: { _id: 1, name: "Marion Jhon" },
-      _id: 1,
-      description: "This is a description",
-      image:
-        "https://i5.walmartimages.com/seo/Toysery-Bot-Robot-Pioneer-Colorful-Lights-Music-Kids-Moving-Multifunctional-Play-Toy-Boys-Girls-Best-Gift-Idea-Colors-may-very_0839a5d4-8760-43be-b53f-821e35c7fee6.8235383cd6d43a7d8fb86734446f6895.jpeg",
-      category: "Robots",
-      title: "We Robots",
-    },
-  ];
+  const posts = await client.fetch(STARTUP_QUERY)
+
   return (
     <>
       <section className="pink_container">
@@ -41,7 +32,7 @@ export default async function Home({
 
         <ul className="mt-7 card_grid">
           {posts?.length > 0 ? (
-            posts.map((post: StartupCardType) => <StartupCard key={post?._id} post={post}/>)
+            posts.map((post: StartupTypeCard) => <StartupCard key={post?._id} post={post}/>)
           ) : (
             <p className="no-results">No startup found</p>
           )}
