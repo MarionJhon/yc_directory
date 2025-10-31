@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 
 export const formSchema = z.object({
   title: z.string().min(3).max(100),
@@ -17,5 +17,5 @@ export const formSchema = z.object({
         return false;
       }
     }),
-  pitch: z.string().min(10),
+  pitch: z.string().min(10),  
 });
