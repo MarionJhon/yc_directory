@@ -7,10 +7,15 @@ import { Button } from "./ui/button";
 import { Send } from "lucide-react";
 import { formSchema } from "@/lib/validation";
 import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { createPitch } from "@/lib/action";
 
 const StartupForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pitch, setPitch] = useState<string>("");
+  const { toast } = useToast();
+  const router = useRouter();
 
   const handleFormSubmit = async (prevState: any, formData: FormData) => {
     try {
@@ -24,7 +29,19 @@ const StartupForm = () => {
 
       await formSchema.parseAsync(formValue);
 
-      console.log(formValue);
+      const result = await createPitch(prevState, formData, pitch);
+
+      if (result.status === "SUCCESS") {
+        toast({
+          title: "SUCCESS",
+          description: "Your startup pitch has been created successfully",
+        });
+
+        router.push("/startup/${result._id}");
+      }
+
+      return result;
+
     } catch (error) {
       if (error instanceof z.ZodError) {
         const flattened: Record<string, string[]> = error.flatten(
@@ -39,8 +56,21 @@ const StartupForm = () => {
 
         setErrors(fieldErrors as Record<string, string>);
 
+        toast({
+          title: "Error",
+          description: "Please check your inputs and try again",
+          variant: "destructive",
+        });
+
         return { ...prevState, error: "Validation Failed", status: "Error" };
       }
+
+      toast({
+        title: "Error",
+        description: "An unexpexted error has occurred",
+        variant: "destructive",
+      });
+
       return {
         ...prevState,
         error: "An unexpexted error has occurred",
@@ -107,7 +137,7 @@ const StartupForm = () => {
           required
           id="link"
           name="link"
-          placeholder="Startup Image URK"
+          placeholder="Startup Image URL"
           className="startup-form_input"
         />
         {errors.link && <p className="startup-form_error">{errors.link}</p>}
